@@ -1,0 +1,17 @@
+- name: deploy code
+  hosts: "{{ IP }}"
+  remote_user: root
+  tasks:
+   - name: "Stop tomcat"
+     shell: pid=$(ps -ef | grep {{ TOMCAT_HOME }} | grep -v grep| grep -v TOMCAT_HOME| awk '{print $2}');if [ -n "$pid" ];then kill -9 $pid;fi
+
+   - name: "Delete old package"
+     shell: rm -rf {{ TOMCAT_HOME }}/webapps/{{ PROJECT_NAME }}*
+
+   - name: "Sync Package"
+     synchronize:
+       dest: "{{ TOMCAT_HOME }}/webapps/"
+       src: target/
+   
+   - name: "Start tomcat ....."
+     shell: nohup {{ TOMCAT_HOME }}/bin/catalina.sh start &

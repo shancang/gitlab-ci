@@ -1,0 +1,45 @@
+variables:
+  TOMCAT_HOME: /usr/local/apache-tomcat-8.5.31
+  IP: 192.168.33.20
+  PROJECT_NAME: my-app
+
+stages:
+  - build
+  - test
+  - deploy
+  
+build code:
+  image: maven:latest
+  stage: build
+  cache:
+    key: build_file
+    paths:
+      - target/*.jar
+  script:
+    - echo "build "
+#    - rm -rf target
+#    - mvn -B -DskipTests clean package
+
+test code:
+  stage: test
+  script:
+    - echo "test code hahahah....."
+
+
+deploy code :
+  image: ansible/centos7-ansible:latest
+  stage: deploy
+  cache:
+    key: build_file
+    paths:
+      - target/*.jar
+    policy: pull
+  before_script:
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+    - eval $(ssh-agent -s)
+    - echo $SSH_KEY | tr  " " "\n"| sed '1,3{N;s/\n/ /}' | sed '1{N;s/\n/ /}' | sed '27{N;s/\n/ /}' |sed '27{N;s/\n/ /}'|sed '27{N;s/\n/ /}' | ssh-add -
+  script:
+    - echo "deploy stage"
+    - echo $IP > hosts
+    - ansible-playbook deploy.yml -i hosts  -e IP=$IP -e TOMCAT_HOME=$TOMCAT_HOME -e PROJECT_NAME=$PROJECT_NAME
+    
