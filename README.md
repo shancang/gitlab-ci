@@ -1,4 +1,2 @@
-# simple-java-maven-app
-
-twtes
-ww# gitlab-ci
+# Gitlab-Ci 
+* gitlab-ci 简单的例子
