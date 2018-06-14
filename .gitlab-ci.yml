@@ -17,8 +17,8 @@ build code:
       - target/*.jar
   script:
     - echo "build "
-#    - rm -rf target
-#    - mvn -B -DskipTests clean package
+    - rm -rf target
+    - mvn -B -DskipTests clean package
 
 test code:
   stage: test
